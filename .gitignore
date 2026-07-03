@@ -1,0 +1,8 @@
+*
+
+!/.gitignore
+!/CMakeLists.txt
+!/cmake/
+!/cmake/**
+!/src/
+!/src/**
