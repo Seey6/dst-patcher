@@ -2,6 +2,9 @@
 
 !/.gitignore
 !/CMakeLists.txt
+!/.github/
+!/.github/workflows/
+!/.github/workflows/*.yml
 !/cmake/
 !/cmake/**
 !/src/
