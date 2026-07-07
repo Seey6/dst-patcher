@@ -20,17 +20,17 @@ jobs:
       - name: Build
         run: cmake --build build --config Release
 
-      - name: Package
+      - name: Stage artifacts
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
           Copy-Item build/Release/dst_mem_patch.dll dist/
+          Copy-Item build/Release/dbghelp.dll dist/
           Copy-Item build/Release/dst_patch_injector.exe dist/
-          Compress-Archive -Path dist/* -DestinationPath dst-mem-patch-windows-x64.zip -Force
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: dst-mem-patch-windows-x64
-          path: dst-mem-patch-windows-x64.zip
+          path: dist/*
           if-no-files-found: error
