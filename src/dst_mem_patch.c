@@ -4,6 +4,8 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "dst_mem_patch.h"
+
 static INIT_ONCE g_patch_once = INIT_ONCE_STATIC_INIT;
 static int g_patch_target = 0;
 
@@ -686,19 +688,28 @@ static void EnsurePatchApplied(void) {
     InitOnceExecuteOnce(&g_patch_once, PatchTargetsOnce, NULL, NULL);
 }
 
-__declspec(dllexport) void ApplyDstMemPatch(void) {
+void DstMemPatchApply(void) {
     EnsurePatchApplied();
 }
 
+void DstMemPatchOnProcessAttach(HMODULE module) {
+    DisableThreadLibraryCalls(module);
+    g_patch_target = GetPatchTargetForCurrentProcess();
+    EnsurePatchApplied();
+}
+
+#ifndef DST_MEM_PATCH_NO_DLL_ENTRY
+__declspec(dllexport) void ApplyDstMemPatch(void) {
+    DstMemPatchApply();
+}
+
 BOOL WINAPI DllMain(HMODULE module, DWORD reason, LPVOID reserved) {
-    (void)module;
     (void)reserved;
 
     if (reason == DLL_PROCESS_ATTACH) {
-        DisableThreadLibraryCalls(module);
-        g_patch_target = GetPatchTargetForCurrentProcess();
-        EnsurePatchApplied();
+        DstMemPatchOnProcessAttach(module);
     }
 
     return TRUE;
 }
+#endif
