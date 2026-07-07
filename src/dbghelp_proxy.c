@@ -1,7 +1,11 @@
 #define _IMAGEHLP_SOURCE_
 
 #include <windows.h>
+
+#define MiniDumpWriteDump DstMemPatchSystemMiniDumpWriteDump
 #include <dbghelp.h>
+#undef MiniDumpWriteDump
+
 #include <string.h>
 
 #include "dst_mem_patch.h"
